@@ -1,8 +1,14 @@
 package com.example.fastcampusmysql.domain.member.repository;
 
 import com.example.fastcampusmysql.domain.member.entity.Member;
+import java.sql.ResultSet;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -11,6 +17,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class MemberRepository {
+	private static final String MEMBER_TABLE_NAME = "Member";
 
 	private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	public Member save(Member member) {
@@ -25,9 +32,32 @@ public class MemberRepository {
 		return update(member);
 	}
 
+	public Optional<Member> findById(Long id) {
+		/*
+			select *
+			from Member
+			where id = : id
+		 */
+
+		String sql = String.format("SELECT * FROM %s WHERE id = :id", MEMBER_TABLE_NAME);
+		var param = new MapSqlParameterSource()
+			.addValue("id", id);
+
+		RowMapper<Member> rowMapper = (ResultSet resultSet, int rowNum) -> Member.builder()
+			.id(resultSet.getLong("id"))
+			.email(resultSet.getString("email"))
+			.nickName(resultSet.getString("nickName"))
+			.birthDay(resultSet.getObject("birthday", LocalDate.class))
+			.createdAt(resultSet.getObject("createdAt", LocalDateTime.class))
+			.build();
+
+		Member member = namedParameterJdbcTemplate.queryForObject(sql, param, rowMapper);
+		return Optional.ofNullable(member);
+	}
+
 	private Member insert(Member member) {
 		SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(namedParameterJdbcTemplate.getJdbcTemplate())
-			.withTableName("Member")
+			.withTableName(MEMBER_TABLE_NAME)
 			.usingGeneratedKeyColumns("id");
 
 		SqlParameterSource params = new BeanPropertySqlParameterSource(member);
