@@ -20,6 +20,15 @@ public class MemberRepository {
 	private static final String MEMBER_TABLE_NAME = "Member";
 
 	private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+	static final RowMapper<Member> rowMapper = (ResultSet resultSet, int rowNum) -> Member.builder()
+		.id(resultSet.getLong("id"))
+		.email(resultSet.getString("email"))
+		.nickname(resultSet.getString("nickName"))
+		.birthday(resultSet.getObject("birthday", LocalDate.class))
+		.createdAt(resultSet.getObject("createdAt", LocalDateTime.class))
+		.build();
+
 	public Member save(Member member) {
 		/*
 			member의 id를 보고 갱신 또는 삽입 연산
@@ -40,16 +49,8 @@ public class MemberRepository {
 		 */
 
 		String sql = String.format("SELECT * FROM %s WHERE id = :id", MEMBER_TABLE_NAME);
-		var param = new MapSqlParameterSource()
+		MapSqlParameterSource param = new MapSqlParameterSource()
 			.addValue("id", id);
-
-		RowMapper<Member> rowMapper = (ResultSet resultSet, int rowNum) -> Member.builder()
-			.id(resultSet.getLong("id"))
-			.email(resultSet.getString("email"))
-			.nickName(resultSet.getString("nickName"))
-			.birthDay(resultSet.getObject("birthday", LocalDate.class))
-			.createdAt(resultSet.getObject("createdAt", LocalDateTime.class))
-			.build();
 
 		Member member = namedParameterJdbcTemplate.queryForObject(sql, param, rowMapper);
 		return Optional.ofNullable(member);
@@ -66,14 +67,17 @@ public class MemberRepository {
 		return Member.builder()
 			.id(id)
 			.email(member.getEmail())
-			.nickName(member.getNickName())
-			.birthDay(member.getBirthDay())
+			.nickname(member.getNickname())
+			.birthday(member.getBirthday())
 			.createdAt(member.getCreatedAt())
 			.build();
 	}
 
 	private Member update(Member member) {
-		// TODO: implemented
+		String sql = String.format("UPDATE %s set email = :email, nickname = :nickname, birthday = :birthday WHERE id = :id", MEMBER_TABLE_NAME);
+		SqlParameterSource params = new BeanPropertySqlParameterSource(member);
+
+		namedParameterJdbcTemplate.update(sql, params);
 		return member;
 	}
 }
