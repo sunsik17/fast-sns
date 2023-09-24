@@ -15,8 +15,8 @@ public record MemberDto(
 		return MemberDto.builder()
 			.id(member.getId())
 			.email(member.getEmail())
-			.nickName(member.getNickName())
-			.birthday(member.getBirthDay())
+			.nickName(member.getNickname())
+			.birthday(member.getBirthday())
 			.build();
 	}
 }

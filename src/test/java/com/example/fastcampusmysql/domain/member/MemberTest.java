@@ -15,7 +15,7 @@ public class MemberTest {
 		//when
 		member.changeNickname(expected);
 	    //then
-		Assertions.assertEquals(expected, member.getNickName());
+		Assertions.assertEquals(expected, member.getNickname());
 	}
 	@Test
 	@DisplayName("닉네임은 10글자를 넘길 수 없다.")
