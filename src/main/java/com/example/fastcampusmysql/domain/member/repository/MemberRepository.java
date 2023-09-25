@@ -4,6 +4,7 @@ import com.example.fastcampusmysql.domain.member.entity.Member;
 import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.RowMapper;
@@ -54,6 +55,15 @@ public class MemberRepository {
 
 		Member member = namedParameterJdbcTemplate.queryForObject(sql, param, rowMapper);
 		return Optional.ofNullable(member);
+	}
+
+	public List<Member> findAllByIdIn(List<Long> ids) {
+		//ids 가 empty 일 때 문제발생
+		if (ids.isEmpty()) return List.of();
+
+		String sql = String.format("SELECT * FROM %s WHERE id in (:ids)", MEMBER_TABLE_NAME);
+		SqlParameterSource params = new MapSqlParameterSource().addValue("ids", ids);
+		return namedParameterJdbcTemplate.query(sql, params, rowMapper);
 	}
 
 	private Member insert(Member member) {
