@@ -60,4 +60,18 @@ public class PostRepository {
 		BeanPropertySqlParameterSource params = new BeanPropertySqlParameterSource(request);
 		return namedParameterJdbcTemplate.query(sql, params, DAILY_POST_COUNT_ROW_MAPPER);
 	}
+
+	public void bulkInsert(List<Post> posts) {
+		String sql = String.format("""
+   			INSERT INTO `%s` (memberId, contents, createdDate, createdAt)
+   			VALUES (:memberId, :contents, :createdDate, :createdAt)
+			""", TABLE);
+
+		SqlParameterSource[] params = posts
+			.stream()
+			.map(BeanPropertySqlParameterSource::new)
+			.toArray(SqlParameterSource[]::new);
+
+		namedParameterJdbcTemplate.batchUpdate(sql, params);
+	}
 }
