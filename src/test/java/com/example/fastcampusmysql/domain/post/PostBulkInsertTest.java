@@ -26,11 +26,11 @@ public class PostBulkInsertTest {
 		);
 		//when
 
-		int million = 10000;
+		int tenThousand = 10000;
 
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
-		List<Post> posts = IntStream.range(0, million * 100)
+		List<Post> posts = IntStream.range(0, tenThousand * 100)
 			.mapToObj(i -> easyRandom.nextObject(Post.class))
 			.toList();
 		stopWatch.stop();
