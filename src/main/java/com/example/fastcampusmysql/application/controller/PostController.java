@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/posts")
 public class PostController {
+
 	private final PostWriteService postWriteService;
 	private final PostReadService postReadService;
 
