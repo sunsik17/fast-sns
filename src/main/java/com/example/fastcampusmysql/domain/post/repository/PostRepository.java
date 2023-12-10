@@ -96,7 +96,7 @@ public class PostRepository {
 		return namedParameterJdbcTemplate.query(sql, params, ROW_MAPPER);
 	}
 
-	public List<Post> findAllLessThanIdsAndInMemberIdAndOrderByIdDesc(
+	public List<Post> findAllLessThanIdAndInMemberIdsAndOrderByIdDesc(
 		Long id, List<Long> memberIds, int size) {
 
 		if (memberIds.isEmpty()) {
