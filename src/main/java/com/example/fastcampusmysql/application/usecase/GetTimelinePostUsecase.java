@@ -18,8 +18,18 @@ public class GetTimelinePostUsecase {
 	private final PostReadService postReadService;
 	public PageCursor<Post> execute(Long memberId, CursorRequest cursorRequest) {
 		/*
-		1. memberId -> follow 조회
-		2. 1번 결과로 게시물들 조회
+			1. memberId -> follow 조회
+			2. 1번 결과로 게시물들 조회
+		 */
+		List<FollowDto> followings = followReadService.getFollowings(memberId);
+		List<Long> followingMemberIds = followings.stream().map(FollowDto::toMemberId).toList();
+		return postReadService.getPosts(followingMemberIds, cursorRequest);
+	}
+
+	public PageCursor<Post> executeByTimeline(Long memberId, CursorRequest cursorRequest) {
+		/*
+			1. Timeline Table 조회
+			2. 1번에 해당하는 게시물을 조회한다.
 		 */
 		List<FollowDto> followings = followReadService.getFollowings(memberId);
 		List<Long> followingMemberIds = followings.stream().map(FollowDto::toMemberId).toList();
