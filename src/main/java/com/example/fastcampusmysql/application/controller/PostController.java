@@ -1,12 +1,12 @@
 package com.example.fastcampusmysql.application.controller;
 
+import com.example.fastcampusmysql.application.usecase.CreatePostUsecase;
 import com.example.fastcampusmysql.application.usecase.GetTimelinePostUsecase;
 import com.example.fastcampusmysql.domain.post.dto.DailyPostCount;
 import com.example.fastcampusmysql.domain.post.dto.DailyPostCountRequest;
 import com.example.fastcampusmysql.domain.post.dto.PostCommand;
 import com.example.fastcampusmysql.domain.post.entity.Post;
 import com.example.fastcampusmysql.domain.post.service.PostReadService;
-import com.example.fastcampusmysql.domain.post.service.PostWriteService;
 import com.example.fastcampusmysql.util.CursorRequest;
 import com.example.fastcampusmysql.util.PageCursor;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -25,13 +25,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/posts")
 public class PostController {
 
-	private final PostWriteService postWriteService;
 	private final PostReadService postReadService;
 	private final GetTimelinePostUsecase getTimelinePostUsecase;
+	private final CreatePostUsecase createPostUsecase;
 
 	@PostMapping("")
 	public Long create(PostCommand postCommand) {
-		return postWriteService.create(postCommand);
+		return createPostUsecase.execute(postCommand);
 	}
 
 	@GetMapping("/daily-post-counts")

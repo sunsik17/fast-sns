@@ -86,4 +86,18 @@ public class TimelineRepository {
 			.createdAt(timeline.getCreatedAt())
 			.build();
 	}
+
+	public void bulkInsert(List<Timeline> timelines) {
+		String sql = String.format("""
+						INSERT INTO `%s` (memberId, postId, createdAt)
+						VALUES (:memberId, :postId, :createdAt)
+			""", TABLE);
+
+		SqlParameterSource[] params = timelines
+			.stream()
+			.map(BeanPropertySqlParameterSource::new)
+			.toArray(SqlParameterSource[]::new);
+
+		namedParameterJdbcTemplate.batchUpdate(sql, params);
+	}
 }
